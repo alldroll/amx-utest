@@ -201,6 +201,11 @@ stock utest_run(ut_list[][_TestT], flags = UT_DEFAULT)
 /**
  *
  */
+#define ASSERT_STRING_EQ(%1,%2) ASSERT_TRUE(equal(%1,%2))
+
+/**
+ *
+ */
 stock _test_assert(test[_TestT], cond, line, const message[] = "")
 {
     new number = ++test[_et_assert_number]
