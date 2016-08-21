@@ -58,16 +58,16 @@ public plugin_init()
 OUTPUT:
 
 ======UTEST RUN=======
->>> Running test suite [test5]: test max function
-+ [test5] OK #1
-+ [test5] OK #2
-+ [test5] OK #3
->>> Running test suite [test6]: test min function
-+ [test6] OK #1
-+ [test6] OK #2
-+ [test6] OK #3
->>> Running test suite [test7]: TODO
->>> Skip test suite test7 (IMPLEMENT ME!)
+>>> Running test suite [test1]: test max function
++ [test1] OK #1
++ [test1] OK #2
++ [test1] OK #3
+>>> Running test suite [test2]: test min function
++ [test2] OK #1
++ [test2] OK #2
++ [test2] OK #3
+>>> Running test suite [test3]: TODO
+>>> Skip test suite test3 (IMPLEMENT ME!)
 =======SUMMARY:========
 Count of all unit tests: 3
 Count of ok tests: 2
