@@ -156,12 +156,12 @@ stock utest_run(ut_list[][_TestT], flags = UT_DEFAULT)
 /**
  *
  */
-#define ASSERT_FALSE(%1) ASSERT_TRUE(!%1)
+#define ASSERT_FALSE(%1) ASSERT_TRUE(%1 == false)
 
 /**
  *
  */
-#define ASSERT_FALSE_MSG(%1,%2) ASSERT_TRUE(!%1,%2)
+#define ASSERT_FALSE_MSG(%1,%2) ASSERT_TRUE(%1 == false,%2)
 
 /**
  *
