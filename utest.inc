@@ -8,18 +8,38 @@
  * inspired by https://github.com/libcheck/check
  */
 
+/**
+ * Maximum length of unit test name
+ */
 #define TEST_NAME_MAX_LEN 64
+
+/**
+ * Maximum length of function name
+ */
 #define TEST_FUNC_MAX_LEN 66
+
+/**
+ * Maximum length of unit test description
+ */
 #define TEST_DESCRIPTION_MAX_LEN 255
 
 /**
+ * Need stop if one of the unit test failed
  */
 #define UT_STOP_AFTER_FIRST_FAIL (1 << 0)
+
+/**
+ * Need to show more info
+ */
 #define UT_VERBOSE (1 << 1)
+
+/**
+ * Default flag (verbose + stop testing on first failure)
+ */
 #define UT_DEFAULT (UT_VERBOSE | UT_STOP_AFTER_FIRST_FAIL)
 
 /**
- *
+ * Scope struct
  */
 enum _:_ScopeT {
     _es_name[TEST_FUNC_MAX_LEN],
@@ -28,10 +48,10 @@ enum _:_ScopeT {
     _es_skipped,
     _es_passed,
     _es_failed
-}
+};
 
 /**
- *
+ * Types of unit test's result execution
  */
 enum TestResultT {
     TEST_OK = 0,
@@ -41,7 +61,7 @@ enum TestResultT {
 };
 
 /**
- *
+ * Test struct
  */
 enum _:_TestT {
     _et_name[TEST_NAME_MAX_LEN],
@@ -52,35 +72,37 @@ enum _:_TestT {
 };
 
 /**
- *
+ * Macro that helps to mark previous test as last
  */
 #define TEST_LIST_END { 0 }
 
 /**
- *
+ * List of unit tests (required)
  */
 #define TEST_LIST stock g_utlist[][_TestT]
 
-
 /**
- *
+ * Start a unit test with START_TEST(unit_test_name), end with END_TEST
+ * Have to use braces within ?
  */
 #define START_TEST(%1)\
 public __%1(__test[_TestT]) {\
     server_print(">>> Running test suite [%s]: %s", #%1, __test[_et_desc]);
 
 /**
- *
+ * END unit test
  */
 #define END_TEST }
 
 /**
- * @param flags
+ * @param flags cell
  */
 #define UTEST_RUN(%1) utest_run(g_utlist, %1)
 
 /**
- * @param reason */
+ * Skip unit est
+ * @param reason
+ */
 #define SKIP_TEST(%1)\
     server_print(">>> Skip test suite %s (%s)", __test[_et_name], %1);\
     __test[_et_result] = TEST_SKIP;\
@@ -144,67 +166,166 @@ stock utest_run(ut_list[][_TestT], flags = UT_DEFAULT)
 }
 
 /**
- *
+ * If condition is false, the test fails
+ * @param %1 Boolean condition
  */
 #define ASSERT_TRUE(%1) _test_assert(__test, any:%1, __LINE__)
 
 /**
- *
+ * If condition is false, the test fails
+ * @param %1 Boolean condition
+ * @param %2 Message to print if test fails
  */
 #define ASSERT_TRUE_MSG(%1,%2) _test_assert(__test, any:%1, __LINE__, %2)
 
 /**
- *
+ * If condition is true, the test fails
+ * @param %1 Boolean condition
+ * @param %2 Message to print if test fails
  */
-#define ASSERT_FALSE(%1) ASSERT_TRUE(%1 == false)
+#define ASSERT_FALSE_MSG(%1,%2) ASSERT_TRUE(!%1,%2)
 
 /**
- *
+ * If condition is true, the test fails
+ * @param %1 Boolean condition
  */
-#define ASSERT_FALSE_MSG(%1,%2) ASSERT_TRUE(%1 == false,%2)
+#define ASSERT_FALSE(%1) ASSERT_FALSE_MSG(%1,"")
 
 /**
- *
+ * If condition (X OP Y) is false, the test fails
+ * @param %1 X cell
+ * @param %2 OP sign
+ * @param %3 Y cell
+ * @param %4 Message to print if test fails
  */
-#define ASSERT_INT(%1,%2,%3) ASSERT_TRUE(cell:%1%2cell:%3)
+#define _ASSERT_INT_MSG(%1,%2,%3,%4) ASSERT_TRUE_MSG(cell:%1%2cell:%3,%4)
 
 /**
- *
+ * If not %1 == %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
  */
-#define ASSERT_INT_EQ(%1,%2) ASSERT_INT(%1,==,%2)
+#define ASSERT_INT_EQ_MSG(%1,%2,%3) _ASSERT_INT_MSG(%1,==,%2,%3)
 
 /**
- *
+ * If not %1 == %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
  */
-#define ASSERT_INT_NEQ(%1,%2) ASSERT_INT(%1,!=,%2)
+#define ASSERT_INT_EQ(%1,%2) ASSERT_INT_EQ_MSG(%1,%2,"")
 
 /**
- *
+ * If not %1 != %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
  */
-#define ASSERT_INT_G(%1,%2) ASSERT_INT(%1,>,%2)
+#define ASSERT_INT_NEQ_MSG(%1,%2,%3) _ASSERT_INT_MSG(%1,!=,%2,%3)
 
 /**
- *
+ * If not %1 != %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
  */
-#define ASSERT_INT_GE(%1,%2) ASSERT_INT(%1,>=,%2)
+#define ASSERT_INT_NEQ(%1,%2) ASSERT_INT_NEQ_MSG(%1,%2,"")
 
 /**
- *
+ * If not %1 > %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
  */
-#define ASSERT_INT_L(%1,%2) ASSERT_INT(%1,<,%2)
+#define ASSERT_INT_GT_MSG(%1,%2,%3) _ASSERT_INT_MSG(%1,>,%2,%3)
 
 /**
- *
+ * If not %1 > %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
  */
-#define ASSERT_INT_LE(%1,%2) ASSERT_INT(%1,<=,%2)
+#define ASSERT_INT_GT(%1,%2) ASSERT_INT_GT_MSG(%1,%2,"")
 
 /**
- *
+ * If not %1 >= %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
  */
-#define ASSERT_STRING_EQ(%1,%2) ASSERT_TRUE(equal(%1,%2))
+#define ASSERT_INT_GE_MSG(%1,%2,%3) _ASSERT_INT_MSG(%1,>=,%2,%3)
 
 /**
- *
+ * If not %1 >= %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ */
+#define ASSERT_INT_GE(%1,%2) ASSERT_INT_GE_MSG(%1,%2,"")
+
+/**
+ * If not %1 < %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
+ */
+#define ASSERT_INT_LT_MSG(%1,%2,%3) _ASSERT_INT(%1,<,%2,%3)
+
+/**
+ * If not %1 < %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ */
+#define ASSERT_INT_LT(%1,%2) ASSERT_INT_LT_MSG(%1,%2,"")
+
+/**
+ * If not %1 <= %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ * @param %3 Message to print if test fails
+ */
+#define ASSERT_INT_LE_MSG(%1,%2,%3) _ASSERT_INT(%1,<=,%2,%3)
+
+/**
+ * If not %1 <= %2, the test fails
+ * @param %1 cell
+ * @param %2 cell
+ */
+#define ASSERT_INT_LE(%1,%2) ASSERT_INT_LE_MSG(%1,%2,"")
+
+/**
+ * If not %1 == %2, the test fails
+ * @param %1 String
+ * @param %2 String
+ * @param %3 Message to print if test fails
+ */
+#define ASSERT_STRING_EQ_MSG(%1,%2,%3) ASSERT_TRUE_MSG(equal(%1,%2),%3)
+
+/**
+ * If not %1 == %2, the test fails
+ * @param %1 String
+ * @param %2 String
+ */
+#define ASSERT_STRING_EQ(%1,%2) ASSERT_STRING_EQ_MSG(%1,%2,"")
+
+/**
+ * If not %1 != %2, the test fails
+ * @param %1 String
+ * @param %2 String
+ * @param %3 Message to print if test fails
+ */
+#define ASSERT_STRING_NEQ_MSG(%1,%2,%3) ASSERT_FALSE_MSG(equal(%1,%2),%3)
+
+/**
+ * If not %1 != %2, the test fails
+ * @param %1 String
+ * @param %2 String
+ */
+#define ASSERT_STRING_NEQ(%1,%2) ASSERT_STRING_NEQ_MSG(%1,%2,"")
+
+/**
+ * Simple assert implementation
+ * @param test _TestT
+ * @param cond cell
+ * @param line cell
+ * @param message String
  */
 stock _test_assert(test[_TestT], cond, line, const message[] = "")
 {
