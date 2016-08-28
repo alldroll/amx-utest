@@ -11,12 +11,12 @@ TODO add description
 #include <amxmodx>
 #include <utest>
 
-stock max(a, b)
+stock my_max(a, b)
 {
     return a > b ? a : b
 }
 
-stock min(a, b)
+stock my_min(a, b)
 {
     return a > b ? b : a
 }
@@ -24,24 +24,29 @@ stock min(a, b)
 TEST_LIST = {
     { "test1", "test max function" },
     { "test2", "test min function" },
-    { "test3", "TODO" },
+    { "test3", "skipped test" },
+    { "test4", "bad test" },
     TEST_LIST_END
 };
 
 START_TEST(test1) {
-    ASSERT_INT_EQ(max(1, 3), 3)
-    ASSERT_TRUE(max(1, 1) == 1)
-    ASSERT_FALSE(max(-1, 1) == -1)
+    ASSERT_INT_EQ(my_max(1, 3), 3)
+    ASSERT_TRUE(my_max(1, 1) == 1)
+    ASSERT_FALSE(my_max(-1, 1) == -1)
 } END_TEST
 
 START_TEST(test2) {
-    ASSERT_INT_EQ(min(1, 3), 1)
-    ASSERT_TRUE(min(1, 1) == 1)
-    ASSERT_FALSE(min(-1, 1) == 1)
+    ASSERT_INT_EQ_MSG(my_min(1, 3), 1, "my_min(1, 3) must return 1")
+    ASSERT_TRUE(my_min(1, 1) == 1)
+    ASSERT_FALSE(my_min(-1, 1) == 1)
 } END_TEST
 
 START_TEST(test3) {
     SKIP_TEST("IMPLEMENT ME!")
+} END_TEST
+
+START_TEST(test4) {
+    ASSERT_TRUE_MSG(false, "show how test fail looks") /* line 38 */
 } END_TEST
 
 public run_test()
@@ -66,14 +71,16 @@ OUTPUT:
 + [test2] OK #1
 + [test2] OK #2
 + [test2] OK #3
->>> Running test suite [test3]: TODO
+>>> Running test suite [test3]: skipped test
 >>> Skip test suite test3 (IMPLEMENT ME!)
+>>> Running test suite [test4]: bad test
++ [test4] FAIL #1 LINE 38, show how test fail looks
 =======SUMMARY:========
-Count of all unit tests: 3
+Count of all unit tests: 4
 Count of ok tests: 2
-Count of failed tests: 0
+Count of failed tests: 1
 Count of skipped tests: 1
-SUCCESS: all unit tests have passed
+FAILED: 1 of 4 unit tests have failed
 ==========END==========
 
 ```
