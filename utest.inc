@@ -82,22 +82,21 @@ enum _:_TestT {
 #define TEST_LIST stock g_utlist[][_TestT]
 
 /**
- * Start a unit test with START_TEST(unit_test_name), end with END_TEST
+ * Start a unit test with START_TEST(unit_test_name)
+ * end with END_TEST (is not required)
  * Have to use braces within ?
  */
-#define START_TEST(%1)\
-public __%1(__test[_TestT]) {\
-    server_print(">>> Running test suite [%s]: %s", #%1, __test[_et_desc]);
+#define START_TEST(%1) public __%1(__test[_TestT])
 
 /**
  * END unit test
  */
-#define END_TEST }
+#define END_TEST
 
 /**
  * @param flags cell
  */
-#define UTEST_RUN(%1) utest_run(g_utlist, %1)
+#define UTEST_RUN(%1) utest_run(g_utlist, %1);
 
 /**
  * Skip unit est
@@ -131,6 +130,13 @@ stock utest_run(ut_list[][_TestT], flags = UT_DEFAULT)
         }
 
         callfunc_push_array(_:ut_list[i], _TestT)
+
+        server_print(
+            ">>> Running test suite [%s]: %s",
+            ut_list[i][_et_name],
+            ut_list[i][_et_desc]
+        );
+
         callfunc_end()
 
         res = ut_list[i][_et_result]
@@ -169,14 +175,14 @@ stock utest_run(ut_list[][_TestT], flags = UT_DEFAULT)
  * If condition is false, the test fails
  * @param %1 Boolean condition
  */
-#define ASSERT_TRUE(%1) _test_assert(__test, any:%1, __LINE__)
+#define ASSERT_TRUE(%1) _test_assert(__test, (any:%1), __LINE__)
 
 /**
  * If condition is false, the test fails
  * @param %1 Boolean condition
  * @param %2 Message to print if test fails
  */
-#define ASSERT_TRUE_MSG(%1,%2) _test_assert(__test, any:%1, __LINE__, %2)
+#define ASSERT_TRUE_MSG(%1,%2) _test_assert(__test, (any:%1), __LINE__, (%2))
 
 /**
  * If condition is true, the test fails
